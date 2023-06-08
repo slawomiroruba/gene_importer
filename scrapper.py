@@ -1,75 +1,18 @@
 import requests
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service as ChromeService
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 import json
-import time
 import pymysql
 from local_db import LocalDB
 from remote_db import RemoteDB
+from requester import Requester
 
-db = LocalDB()
+local_db = LocalDB()
 remote_db = RemoteDB()
 
 # 0. Zdefiniuj zmienne i funkcje pomocnicze
 api_url = 'https://geneteka.genealodzy.pl/api/getAct.php'
 
-def create_db_connection(host, user, password, db):
-    connection = pymysql.connect(
-        host=host,
-        user=user,
-        password=password,
-        db=db
-    )
-    return connection
 
-# def insert_into_db(connection, rekordy):
-#     with connection.cursor() as cursor:
-#         for rekord in rekordy:
-#             insert_query = "INSERT INTO rekordy (rok, akt, field_3, field_4, field_5, field_6, field_7, field_8, miejscowosc_parafia, uwagi, teren, parafia) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-#             cursor.execute(insert_query, (rekord['rok'], rekord['akt'], rekord['field_3'], rekord['field_4'], rekord['field_5'], rekord['field_6'], rekord['field_7'], rekord['field_8'], rekord['miejscowosc_parafia'], rekord['uwagi'], rekord['teren'], rekord['parafia']))
-#     connection.commit()
-
-
-
-
-# def create_table(connection):
-#     with connection.cursor() as cursor:
-#         table_query = """
-#         CREATE TABLE IF NOT EXISTS rekordy (
-#             id INT AUTO_INCREMENT PRIMARY KEY,
-#             rok VARCHAR(255),
-#             akt VARCHAR(255),
-#             field_3 VARCHAR(255),
-#             field_4 VARCHAR(255),
-#             field_5 VARCHAR(255),
-#             field_6 VARCHAR(255),
-#             field_7 VARCHAR(255),
-#             field_8 VARCHAR(255),
-#             miejscowosc_parafia VARCHAR(255),
-#             uwagi VARCHAR(2000),
-#             teren VARCHAR(255),
-#             parafia VARCHAR(255)
-#         )
-#         """
-#         cursor.execute(table_query)
-#     connection.commit()
-
-def get_soup(url):
-    return soup_parse(http_request(url))
-
-def http_request(url, params=None):
-    response = requests.get(url, params=params)
-    response.raise_for_status()
-    return response
-
-def soup_parse(response):
-    soup = BeautifulSoup(response.text, 'html.parser')
-    return soup
 
 def fetch_data(url, params, headers, max_retries=20):
     for attempt in range(max_retries):
