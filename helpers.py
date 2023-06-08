@@ -1,3 +1,6 @@
+import json
+
+
 class Json:
     @staticmethod
     def write(filename, data):

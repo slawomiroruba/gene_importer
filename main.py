@@ -8,6 +8,29 @@ remote_db = RemoteDB()
 requester = Requester()
 json_tools = Json()
 
+class Importer:
+    def porownaj_ilosc_rekordow_lokalnie_do_zdalnie_dla_parafii(self, teren, rid):
+        # pobierz ilosc rekordow z lokalnej bazy dla danej parafii
+        # pobierz ilosc rekordow z zewnetrznej bazy dla danej parafii
+        # porownaj ilosci rekordow
+        # jesli ilosci sa rozne to zwroc False
+        # jesli ilosci sa takie same to zwroc True
+        return
+
+    def porownaj_rekord_parafii(self, rekord):
+        # wyszukaj rekord w lokalnej bazie
+        # jesli rekord istnieje to zwroc True
+        # jesli rekord nie istnieje to zwroc False
+        return
+
+    def przepisz_rekordy_parafii(self, nazwa_tabeli, ilosc_rekordow):
+        # usuń wszystkie rekordy z lokalnej bazy dla danej parafii
+        # pobierz wszystkie rekordy z zewnetrznej bazy dla danej parafii
+        # zapisz wszystkie rekordy do lokalnej bazy
+        return
+
+
+json_tools.write('tereny_i_parafie.json', remote_db.tereny_i_parafie)
 for teren, parafie in remote_db.tereny_i_parafie.items():
     print(f'Przetwarzam teren: {teren}')
     if remote_db.licznik_terenow >= remote_db.max_tereny:
@@ -36,6 +59,7 @@ for teren, parafie in remote_db.tereny_i_parafie.items():
                     if rekordy:
                         for rekord in rekordy:
                             rekord.append(teren)
+                            rekord.append(parafia)
                         local_db.insert_into_db(rekordy, record_type)
 
         remote_db.licznik_parafii += 1  

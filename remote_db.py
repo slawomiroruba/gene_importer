@@ -9,12 +9,12 @@ class RemoteDB:
         self.set_headers('XMLHttpRequest', 'https://geneteka.genealodzy.pl/index.php?op=gt&lang=pol&bdm=B&w=05ma')
         self.strona_wyszukiwarki = Requester.get_soup('https://geneteka.genealodzy.pl/index.php?op=gt')
         self.tereny = self.pobierz_tereny()
+        # TODO: Dodać do słownika kody parafii i terenu
         self.tereny_i_parafie = {teren: RemoteDB.pobierz_parafie(value) for teren, value in self.tereny.items()}
         self.licznik_terenow = 0
         self.licznik_parafii = 0
         self.max_tereny = 999 
         self.max_parafie = 999
-        print(self.tereny_i_parafie)
 
     def set_params(self, start, length, w, rid):
         self.params['start'] = start
