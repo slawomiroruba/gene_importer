@@ -1,4 +1,5 @@
 from requester import Requester
+from helpers import Json
 
 # RemoteDB class definition
 class RemoteDB:
@@ -13,8 +14,8 @@ class RemoteDB:
         self.tereny_i_parafie = {teren: RemoteDB.pobierz_parafie(value) for teren, value in self.tereny.items()}
         self.licznik_terenow = 0
         self.licznik_parafii = 0
-        self.max_tereny = 999 
-        self.max_parafie = 999
+        self.max_tereny = 1
+        self.max_parafie = 9999
 
     def set_params(self, start, length, w, rid):
         self.params['start'] = start
@@ -29,12 +30,17 @@ class RemoteDB:
     def pobierz_zakres_rekordow(self, parafia, teren, start , length):
         self.set_params(start, length, teren, parafia)
         response = Requester.fetch_data(self.api_url, self.params, headers=self.headers)
+        for rekord in response['data']:
+            rekord.append(parafia)
         return response
     
     def pobierz_tereny(self):
         options = self.strona_wyszukiwarki.select('select#sel_w option')
         return {option.text: option['value'] for option in options}
     
+    def get_teren_id(self, nazwa_parafii):
+        return self.tereny[nazwa_parafii] 
+
     def pobierz_parafie(teren):
         url = 'https://geneteka.genealodzy.pl/index.php?op=gt' + '&lang=pol&bdm=B&w=' + teren
         soup = Requester.get_soup(url)
@@ -70,3 +76,5 @@ class RemoteDB:
     
 
 
+remotedb = RemoteDB()
+# Json.write('tereny.json', remotedb.tereny)
