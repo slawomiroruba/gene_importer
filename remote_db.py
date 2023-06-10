@@ -1,5 +1,6 @@
 from requester import Requester
 from helpers import Json
+from tqdm import tqdm
 
 # RemoteDB class definition
 class RemoteDB:
@@ -14,7 +15,7 @@ class RemoteDB:
         self.tereny_i_parafie = {teren: RemoteDB.pobierz_parafie(value) for teren, value in self.tereny.items()}
         self.licznik_terenow = 0
         self.licznik_parafii = 0
-        self.max_tereny = 1
+        self.max_tereny = 999
         self.max_parafie = 9999
 
     def set_params(self, start, length, w, rid):
@@ -74,6 +75,22 @@ class RemoteDB:
         # Zwróć recordTotal jako int
         return int(response['recordsTotal'])
     
+    def pobierz_wszystkie_rekordy_z_parafii_i_dodaj_do_bazy(self, parafia, teren, local_db, record_type):
+        start = 0
+        length = 50
+        total_records = self.get_number_of_records(parafia, teren)
+        progress_bar = tqdm(total=total_records, desc=f"Przetwarzanie {parafia}", unit="rekord")
+        while True:
+            response = self.pobierz_zakres_rekordow(parafia, teren, start, length)
+            if response is None or len(response['data']) == 0:
+                break
+            rekordy = response['data']
+            for rekord in rekordy:
+                rekord.append(teren)
+            local_db.insert_into_db(rekordy, record_type)
+            progress_bar.update(len(rekordy))
+            start += length
+        progress_bar.close()
 
 
 remotedb = RemoteDB()
