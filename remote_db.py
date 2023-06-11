@@ -82,6 +82,7 @@ class RemoteDB:
         progress_bar = tqdm(total=total_records, desc=f"Przetwarzanie {parafia}", unit="rekord")
         while True:
             response = self.pobierz_zakres_rekordow(parafia, teren, start, length)
+            Json.write('response.json', response)
             if response is None or len(response['data']) == 0:
                 break
             rekordy = response['data']
